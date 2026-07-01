@@ -1,16 +1,12 @@
-import os
-from pydantic import BaseModel, Field, ConfigDict
-from dotenv import load_dotenv
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# Cargar variables desde el archivo .env
-load_dotenv()
-
-class Settings(BaseModel):
+class Settings(BaseSettings):
     """
     Configuración global de la aplicación.
     Valida las variables de entorno necesarias para la ejecución.
     """
-    model_config = ConfigDict(frozen=True)
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", frozen=True)
 
     PROJECT_NAME: str = Field(
         default="API de IA Clínica y Recetas por Voz",
@@ -21,12 +17,24 @@ class Settings(BaseModel):
         description="Versión del microservicio"
     )
     MONGO_URI: str = Field(
-        default=os.getenv("MONGO_URI", "mongodb://localhost:27017"),
+        default="mongodb://localhost:27017",
         description="URI de conexión a MongoDB"
     )
     GEMINI_API_KEY: str = Field(
-        default=os.getenv("GEMINI_API_KEY", ""),
+        default="",
         description="Llave de API para Google Gemini"
+    )
+    CORS_ORIGINS: list[str] = Field(
+        default=["http://localhost", "http://localhost:3000", "http://127.0.0.1:8000", "http://127.0.0.1:3000"],
+        description="Orígenes permitidos para CORS"
+    )
+    SECRET_KEY: str = Field(
+        default="SUPER_SECRET_KEY_FOR_DEVELOPMENT_ONLY",
+        description="Clave secreta para firmar los tokens JWT"
+    )
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(
+        default=60,
+        description="Minutos de expiración del token JWT"
     )
 
 # Instancia global de configuración

@@ -20,6 +20,6 @@ async def check_db_connection():
     try:
         # Hacemos un 'ping' rápido a la base de datos
         await client.admin.command('ping')
-        print("✅ ¡Conexión exitosa a MongoDB asíncrono!")
+        print("¡Conexión exitosa a MongoDB asíncrono!")
     except Exception as e:
-        print(f"❌ Error crítico conectando a MongoDB: {e}")
+        print(f"Error crítico conectando a MongoDB: {e}")
