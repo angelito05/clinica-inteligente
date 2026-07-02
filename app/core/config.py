@@ -25,7 +25,7 @@ class Settings(BaseSettings):
         description="Llave de API para Google Gemini"
     )
     CORS_ORIGINS: list[str] = Field(
-        default=["http://localhost", "http://localhost:3000", "http://127.0.0.1:8000", "http://127.0.0.1:3000"],
+        default=["http://localhost", "http://localhost:3000", "http://127.0.0.1:8000", "http://127.0.0.1:3000", "https://angelito05.github.io"],
         description="Orígenes permitidos para CORS"
     )
     SECRET_KEY: str = Field(

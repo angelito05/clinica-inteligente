@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.core.database import check_db_connection
 from app.core.config import settings
+from app.api.auth import router as auth_router
 
 # El 'lifespan' maneja lo que pasa cuando el servidor se enciende y se apaga
 @asynccontextmanager
@@ -44,5 +45,5 @@ async def root():
 from app.api import auth
 
 # Aquí abajo registraremos los "routers" (endpoints)
-app.include_router(auth.router, prefix="/api/v1/auth", tags=["Autenticación"])
+app.include_router(auth_router)
 # app.include_router(recetas.router, prefix="/api/v1")
