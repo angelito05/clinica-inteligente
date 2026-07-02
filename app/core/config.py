@@ -17,7 +17,7 @@ class Settings(BaseSettings):
         description="Versión del microservicio"
     )
     MONGO_URI: str = Field(
-        default="mongodb://localhost:27017",
+        default="MONGO_URI",
         description="URI de conexión a MongoDB"
     )
     GEMINI_API_KEY: str = Field(
@@ -25,11 +25,11 @@ class Settings(BaseSettings):
         description="Llave de API para Google Gemini"
     )
     CORS_ORIGINS: list[str] = Field(
-        default=["http://localhost", "http://localhost:3000", "http://127.0.0.1:8000", "http://127.0.0.1:3000", "https://angelito05.github.io"],
+        default=["http://localhost", "http://localhost:3000", "http://127.0.0.1:8000", "http://127.0.0.1:5500"],
         description="Orígenes permitidos para CORS"
     )
     SECRET_KEY: str = Field(
-        default="SUPER_SECRET_KEY_FOR_DEVELOPMENT_ONLY",
+        default="SECRET_KEY",
         description="Clave secreta para firmar los tokens JWT"
     )
     ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(
