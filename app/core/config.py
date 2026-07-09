@@ -24,6 +24,7 @@ class Settings(BaseSettings):
         default="",
         description="Llave de API para Google Gemini"
     )
+    GROQ_API_KEY: str
     CORS_ORIGINS: list[str] = Field(
         default=["http://localhost", "http://localhost:3000", "http://127.0.0.1:8000", "http://127.0.0.1:5500"],
         description="Orígenes permitidos para CORS"
@@ -35,6 +36,12 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(
         default=60,
         description="Minutos de expiración del token JWT"
+    )
+    JWT_SECRET: str = Field(
+        default="SUPER_SECRET_KEY"
+    )
+    FRONTEND_URL: str = Field(
+        default="http://127.0.0.1:5500"
     )
 
 # Instancia global de configuración

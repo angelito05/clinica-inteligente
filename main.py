@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 from app.core.database import check_db_connection
 from app.core.config import settings
 from app.api.auth import router as auth_router
+from app.api.recetas import router as recetas_router
 
 # El 'lifespan' maneja lo que pasa cuando el servidor se enciende y se apaga
 @asynccontextmanager
@@ -46,4 +47,4 @@ from app.api import auth
 
 # Aquí abajo registraremos los "routers" (endpoints)
 app.include_router(auth_router)
-# app.include_router(recetas.router, prefix="/api/v1")
+app.include_router(recetas_router)
