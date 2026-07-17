@@ -158,8 +158,10 @@ from PIL import Image
 import httpx
 import os
 
+import sys
 # Configurar la ruta de Tesseract en Windows
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+if sys.platform == "win32":
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 async def analizar_estudio_ia(file_url: str) -> str:
     """
