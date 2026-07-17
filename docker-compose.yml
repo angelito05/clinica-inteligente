@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  api-clinica:
+    build: .
+    container_name: clinica_backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    # Si quieres que se recargue automáticamente con tus cambios locales (Hot Reload):
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
