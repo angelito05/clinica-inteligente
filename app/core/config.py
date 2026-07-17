@@ -26,8 +26,8 @@ class Settings(BaseSettings):
     )
     GROQ_API_KEY: str
     CORS_ORIGINS: list[str] = Field(
-        default=["http://localhost", "http://localhost:3000", "http://127.0.0.1:8000", "http://127.0.0.1:5500"],
-        description="Orígenes permitidos para CORS"
+        default=["*"],
+        description="Orígenes permitidos para CORS (permite Vercel y Localhost)"
     )
     SECRET_KEY: str = Field(
         default="SECRET_KEY",
