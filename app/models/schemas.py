@@ -91,3 +91,18 @@ class RecetaEstructurada(BaseModel):
     # --- Nuevos campos para vincular con el Expediente Clínico ---
     paciente_id: Optional[str] = Field(None, description="ID del paciente (MongoDB) al que pertenece esta receta")
     consulta_id: Optional[str] = Field(None, description="ID de la consulta (MongoDB) donde se generó esta receta")
+
+class ConsultaDictadaIA(BaseModel):
+    """
+    Esquema integral devuelto por Llama-3 al escuchar toda la consulta.
+    Combina la historia clínica (SOAP) y la receta.
+    """
+    motivo_consulta: str = Field(default="No especificado", description="Motivo principal de la visita")
+    sintomas: str = Field(default="No especificado", description="Síntomas descritos por el paciente")
+    peso: str = Field(default="", description="Peso en kg")
+    talla: str = Field(default="", description="Estatura en cm")
+    temperatura: str = Field(default="", description="Temperatura en °C")
+    presion_arterial: str = Field(default="", description="Presión arterial")
+    diagnostico: str = Field(default="No especificado", description="Diagnóstico clínico")
+    medicamentos: List[Medicamento] = Field(default_factory=list, description="Lista de medicamentos recetados")
+    indicaciones_adicionales: str = Field(default="Ninguna", description="Dieta, reposo o cuidados extra")

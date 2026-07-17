@@ -83,6 +83,75 @@ async def procesar_audio_receta(audio_bytes: bytes) -> dict:
             os.remove(temp_audio_path)
         raise e
 
+async def procesar_audio_consulta_completa(audio_bytes: bytes) -> dict:
+    """
+    Escucha toda la consulta clínica y extrae formato SOAP completo.
+    """
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as temp_audio:
+        temp_audio.write(audio_bytes)
+        temp_audio_path = temp_audio.name
+
+    try:
+        print("🎙️ 1. Enviando a Whisper para transcripción completa...")
+        with open(temp_audio_path, "rb") as file:
+            transcripcion = await client.audio.transcriptions.create(
+                file=("dictado.webm", file.read()),
+                model="whisper-large-v3",
+                response_format="text",
+                language="es"
+            )
+        
+        texto_dictado = transcripcion
+        print(f"📝 Texto detectado: {texto_dictado}")
+
+        print("🧠 2. Enviando a Llama 3 para estructurar la Consulta (SOAP)...")
+        prompt = f"""
+        Eres un asistente médico experto (Escribano Clínico). Has escuchado la transcripción de una consulta médica entre un doctor y un paciente, o un dictado libre del doctor.
+        Tu trabajo es extraer TODA la información relevante y estructurarla en un formato JSON exacto.
+        Si un dato no se menciona, pon "No especificado" o déjalo vacío ("").
+
+        TEXTO DEL AUDIO: "{texto_dictado}"
+
+        ESTRUCTURA JSON REQUERIDA (Debes devolver SOLO JSON válido):
+        {{
+            "motivo_consulta": "Razón por la que acude el paciente o resumen inicial",
+            "sintomas": "Descripción de síntomas, dolor, tiempo de evolución",
+            "peso": "Ej: 80",
+            "talla": "Ej: 170",
+            "temperatura": "Ej: 37.5",
+            "presion_arterial": "Ej: 120/80",
+            "diagnostico": "Diagnóstico principal",
+            "medicamentos": [
+                {{
+                    "nombre": "Nombre del medicamento",
+                    "dosis": "Dosis",
+                    "frecuencia": "Frecuencia",
+                    "duracion": "Duración"
+                }}
+            ],
+            "indicaciones_adicionales": "Otras indicaciones, dieta, reposo"
+        }}
+        """
+
+        chat_completion = await client.chat.completions.create(
+            messages=[
+                {"role": "system", "content": "You are a machine that only outputs valid JSON."},
+                {"role": "user", "content": prompt}
+            ],
+            model="llama-3.1-8b-instant",
+            temperature=0,
+            response_format={"type": "json_object"}
+        )
+
+        os.remove(temp_audio_path)
+        return json.loads(chat_completion.choices[0].message.content)
+
+    except Exception as e:
+        print(f"🔥 ERROR EN GROQ (Consulta): {str(e)}")
+        if os.path.exists(temp_audio_path):
+            os.remove(temp_audio_path)
+        raise e
+
 import pdfplumber
 import pytesseract
 from PIL import Image
@@ -179,3 +248,36 @@ async def analizar_estudio_ia(file_url: str) -> str:
     except Exception as e:
         print(f"🔥 ERROR EN GROQ TEXT: {str(e)}")
         raise ValueError(f"Error en el análisis de IA: {str(e)}")
+
+async def generar_resumen_historial(consultas_texto: str) -> str:
+    """
+    Genera un resumen clínico de 3-4 líneas basado en el texto del historial completo.
+    """
+    prompt = f"""
+    Eres un asistente médico experto. A continuación te presento el historial clínico reciente de un paciente (últimas consultas).
+    Tu objetivo es leerlo y redactar un resumen ejecutivo de máximo 3 a 4 líneas.
+    Destaca:
+    - Enfermedades crónicas si las hay.
+    - El último diagnóstico.
+    - El último tratamiento recetado.
+    El resumen debe ser directo, profesional y estar listo para que el médico lo lea rápidamente al abrir el perfil del paciente.
+
+    HISTORIAL DEL PACIENTE:
+    \"\"\"
+    {consultas_texto}
+    \"\"\"
+    """
+    
+    print("🧠 Enviando historial a llama-3.1-8b-instant en Groq para resumir...")
+    try:
+        chat_completion = await client.chat.completions.create(
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
+            model="llama-3.1-8b-instant",
+            temperature=0.3,
+        )
+        return chat_completion.choices[0].message.content
+    except Exception as e:
+        print(f"🔥 ERROR EN GROQ RESUMEN: {str(e)}")
+        raise ValueError(f"Error generando el resumen: {str(e)}")
