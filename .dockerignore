@@ -1,0 +1,23 @@
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Entornos virtuales
+venv/
+env/
+ENV/
+
+# Archivos de entorno y secretos
+.env
+.env.*
+
+# Logs
+*.log
+
+# Git
+.git
+.gitignore
+
+# Carpetas locales que no van al contenedor
+uploads/
+tessdata/
