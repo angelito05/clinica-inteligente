@@ -3,8 +3,10 @@ from datetime import datetime, timedelta, timezone
 import jwt
 import bcrypt  # <-- Usamos bcrypt directamente, adiós passlib
 
+from app.core.config import settings
+
 # Llave secreta para firmar los JWT
-SECRET_KEY = os.getenv("JWT_SECRET", "super_secreto_clinico_2026")
+SECRET_KEY = settings.JWT_SECRET
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 8  # El token dura 8 horas
 

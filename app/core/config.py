@@ -43,6 +43,19 @@ class Settings(BaseSettings):
     FRONTEND_URL: str = Field(
         default="http://127.0.0.1:5500"
     )
+    CLOUDINARY_URL: str = Field(
+        default="",
+        description="URL de conexión a Cloudinary"
+    )
 
 # Instancia global de configuración
 settings = Settings()
+
+# Configuración automática de Cloudinary si la URL está presente
+if settings.CLOUDINARY_URL:
+    import os
+    import cloudinary
+    # Pydantic carga el .env internamente, por lo que debemos forzarlo en el SO para que Cloudinary lo vea
+    os.environ['CLOUDINARY_URL'] = settings.CLOUDINARY_URL
+    cloudinary.reset_config()
+    cloudinary.config(secure=True)

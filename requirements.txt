@@ -12,3 +12,5 @@ python-multipart
 pydantic-settings
 passlib[bcrypt]
 PyJWT
+cloudinary
+httpx

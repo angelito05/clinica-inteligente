@@ -45,7 +45,8 @@ async def login_usuario(credenciales: LoginRequest):
     return {
         "token": access_token,
         "rol": usuario_db["rol"],
-        "nombre": usuario_db["nombre"]
+        "nombre": usuario_db["nombre"],
+        "cedula": usuario_db.get("cedula_profesional", "No registrada")
     }
 
 @router.post("/registro", status_code=status.HTTP_201_CREATED)

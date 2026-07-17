@@ -87,3 +87,7 @@ class RecetaEstructurada(BaseModel):
     diagnostico: Optional[str] = Field(default="No especificado", description="Diagnóstico principal detectado en el audio")
     medicamentos: List[Medicamento] = Field(default_factory=list, description="Lista de medicamentos recetados")
     indicaciones_adicionales: Optional[str] = Field(default="Ninguna", description="Dieta, reposo o cuidados extra")
+    
+    # --- Nuevos campos para vincular con el Expediente Clínico ---
+    paciente_id: Optional[str] = Field(None, description="ID del paciente (MongoDB) al que pertenece esta receta")
+    consulta_id: Optional[str] = Field(None, description="ID de la consulta (MongoDB) donde se generó esta receta")

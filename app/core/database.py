@@ -12,6 +12,9 @@ usuarios_col = db.get_collection("usuarios")
 historial_col = db.get_collection("historial_clinico")
 recetas_col = db.get_collection("recetas_inteligentes")
 extracciones_col = db.get_collection("extracciones_ocr")
+pacientes_col = db.get_collection("pacientes")
+consultas_col = db.get_collection("consultas")
+estudios_col = db.get_collection("estudios")
 
 async def check_db_connection():
     """

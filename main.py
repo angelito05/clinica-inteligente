@@ -25,12 +25,12 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Configuración CORS (Vital para que tu frontend HTML/JS pueda comunicarse)
+# Configuración CORS (Estricta para Producción)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,  # Orígenes permitidos controlados por entorno
+    allow_origins=[settings.FRONTEND_URL],  # Solo permite el frontend oficial
     allow_credentials=True,
-    allow_methods=["*"],  # Permite GET, POST, PUT, DELETE, etc.
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -44,7 +44,14 @@ async def root():
     }
 
 from app.api import auth
+from app.api.pacientes import router as pacientes_router
+from app.api.consultas import router as consultas_router
+from app.api.estudios import router as estudios_router
+# (Eliminado montaje estático /uploads por seguridad, usamos Cloudinary)
 
 # Aquí abajo registraremos los "routers" (endpoints)
 app.include_router(auth_router)
 app.include_router(recetas_router)
+app.include_router(pacientes_router)
+app.include_router(consultas_router)
+app.include_router(estudios_router)

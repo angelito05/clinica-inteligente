@@ -62,10 +62,20 @@ async def guardar_receta_final(
 
         # Inserción en MongoDB
         resultado = await db.recetas.insert_one(receta_dict)
+        receta_id = str(resultado.inserted_id)
+        
+        # --- NUEVO: Vincular receta con la Consulta (si existe) ---
+        from bson import ObjectId
+        from app.core.database import consultas_col
+        if receta.consulta_id and ObjectId.is_valid(receta.consulta_id):
+            await consultas_col.update_one(
+                {"_id": ObjectId(receta.consulta_id)},
+                {"$set": {"receta_id": receta_id}}
+            )
         
         return {
             "mensaje": "Receta guardada exitosamente y firmada digitalmente", 
-            "id": str(resultado.inserted_id)
+            "id": receta_id
         }
 
     except Exception as e:
@@ -74,3 +84,22 @@ async def guardar_receta_final(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al guardar la receta: {str(e)}"
         )
+
+@router.get("/{receta_id}")
+async def obtener_receta(
+    receta_id: str,
+    usuario_actual: dict = Depends(get_usuario_actual)
+):
+    """
+    Obtiene los detalles de una receta previamente guardada.
+    """
+    from bson import ObjectId
+    if not ObjectId.is_valid(receta_id):
+        raise HTTPException(status_code=400, detail="ID de receta inválido")
+    
+    receta = await db.recetas.find_one({"_id": ObjectId(receta_id), "doctor_id": str(usuario_actual["_id"])})
+    if not receta:
+        raise HTTPException(status_code=404, detail="Receta no encontrada o no autorizada")
+        
+    receta["id"] = str(receta.pop("_id"))
+    return receta
