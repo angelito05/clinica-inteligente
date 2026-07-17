@@ -7,10 +7,10 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # Instala dependencias del sistema operativo (Tesseract OCR y librerías necesarias para pdfplumber)
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     tesseract-ocr \
     tesseract-ocr-spa \
-    libgl1-mesa-glx \
+    libgl1 \
     poppler-utils \
     && rm -rf /var/lib/apt/lists/*
 

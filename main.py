@@ -1,5 +1,6 @@
 # pyrefly: ignore [missing-import]
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 # pyrefly: ignore [missing-import]
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -48,6 +49,15 @@ from app.api.pacientes import router as pacientes_router
 from app.api.consultas import router as consultas_router
 from app.api.estudios import router as estudios_router
 # (Eliminado montaje estático /uploads por seguridad, usamos Cloudinary)
+
+# Manejador Global de Excepciones No Controladas
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    print(f"🔥 ERROR GLOBAL NO CONTROLADO: {str(exc)}")
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Ocurrió un error interno en el servidor. Por favor, intente más tarde."},
+    )
 
 # Aquí abajo registraremos los "routers" (endpoints)
 app.include_router(auth_router)

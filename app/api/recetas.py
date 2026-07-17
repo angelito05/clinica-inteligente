@@ -34,7 +34,7 @@ async def crear_receta_desde_audio(audio: UploadFile = File(...)):
         
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error procesando el audio con IA: {str(e)}"
+            detail="Error interno procesando el audio con IA. Por favor intente más tarde."
         )
 
 @router.post("/guardar")
@@ -82,7 +82,7 @@ async def guardar_receta_final(
         print(f"🔥 ERROR AL GUARDAR: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error al guardar la receta: {str(e)}"
+            detail="Error interno al guardar la receta."
         )
 
 @router.get("/{receta_id}")

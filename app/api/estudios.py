@@ -61,7 +61,8 @@ async def subir_estudio(
         secure_url = upload_result.get("secure_url")
         public_id = upload_result.get("public_id")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error subiendo a Cloudinary: {str(e)}")
+        print(f"🔥 ERROR CLOUDINARY: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error interno al subir el archivo.")
 
     # 4. Guardar metadatos en MongoDB
     estudio_dict = {
@@ -182,7 +183,8 @@ async def analizar_estudio(
         
         return {"analisis": analisis_markdown}
     except ValueError as ve:
-        raise HTTPException(status_code=400, detail=str(ve))
+        print(f"🔥 ERROR VALOR IA: {str(ve)}")
+        raise HTTPException(status_code=400, detail="Error en el formato o análisis del archivo.")
     except Exception as e:
         print(f"🔥 ERROR AL ANALIZAR CON IA: {str(e)}")
         raise HTTPException(status_code=500, detail="Error procesando el archivo con IA.")

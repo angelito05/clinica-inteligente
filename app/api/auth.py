@@ -113,7 +113,8 @@ async def get_usuario_actual(request: Request):
         return usuario_db
         
     except Exception as e:
+        print(f"🔥 ERROR SESIÓN: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, 
-            detail=f"Error validando sesión: {str(e)}"
+            detail="Sesión inválida o expirada."
         )

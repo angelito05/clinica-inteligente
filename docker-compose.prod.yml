@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  api-clinica:
+    build: .
+    container_name: clinica_backend_prod
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    restart: always
+    # Eliminamos volumes y command para usar el comportamiento de producción del Dockerfile

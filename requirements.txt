@@ -14,3 +14,4 @@ passlib[bcrypt]
 PyJWT
 cloudinary
 httpx
+groq
