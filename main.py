@@ -65,3 +65,7 @@ app.include_router(recetas_router)
 app.include_router(pacientes_router)
 app.include_router(consultas_router)
 app.include_router(estudios_router)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
