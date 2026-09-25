@@ -1,6 +1,7 @@
 # pyrefly: ignore [missing-import]
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.templating import Jinja2Templates
 # pyrefly: ignore [missing-import]
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -65,6 +66,28 @@ app.include_router(recetas_router)
 app.include_router(pacientes_router)
 app.include_router(consultas_router)
 app.include_router(estudios_router)
+
+# --- SSR Endpoint Demonstration ---
+templates = Jinja2Templates(directory="app/templates")
+
+@app.get("/ssr/dashboard", response_class=HTMLResponse)
+async def get_ssr_dashboard(request: Request):
+    # En un caso real, estos datos vendrían de la base de datos MongoDB
+    stats = {
+        "total_pacientes": 145,
+        "consultas_hoy": 12,
+        "recetas_emitidas": 8
+    }
+    proximas_citas = [
+        {"paciente": "Juan Pérez", "fecha": "2026-10-25", "hora": "10:00", "estado": "Confirmada"},
+        {"paciente": "María García", "fecha": "2026-10-25", "hora": "11:30", "estado": "Pendiente"},
+        {"paciente": "Carlos López", "fecha": "2026-10-25", "hora": "12:15", "estado": "Confirmada"},
+    ]
+    
+    return templates.TemplateResponse(
+        request=request, name="ssr_dashboard.html", context={"stats": stats, "proximas_citas": proximas_citas}
+    )
+# ----------------------------------
 
 if __name__ == "__main__":
     import uvicorn
